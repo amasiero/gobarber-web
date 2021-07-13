@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  postgres:
+    image: 'postgres:latest'
+    container_name: gobarber_database
+    ports:
+      - '5432:5432'
+    environment:
+      'POSTGRES_USER': 'docker'
+      'POSTGRES_PASSWORD': 'docker'
+      'POSTGRES_DB': 'gobarber_database'
+    volumes:
+      - db-data/:/var/lib/postgresql/data
+    networks:
+      - prod-network
+
+  gobarber:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    image: amasiero/gobarber
+    container_name: gobarber
+    ports:
+      - '3000:3000'
+    networks:
+      - prod-network
+    depends_on:
+      - postgres
+
+volumes:
+  db-data:
+
+networks:
+  prod-network:
+    driver: bridge
